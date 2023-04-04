@@ -33,3 +33,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 pnpm-lock*
+yarn.lock
+package-lock.json
+
+src_old

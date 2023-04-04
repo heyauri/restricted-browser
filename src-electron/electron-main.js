@@ -13,8 +13,8 @@ import {
 } from "electron";
 import path from "path";
 import os from "os";
-
-import { bindMsgCenter } from "./msg-center";
+import * as electronUtils from "./lib/electron-utils.js";
+let config = electronUtils.config;
 
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
@@ -25,92 +25,38 @@ try {
             path.join(app.getPath("userData"), "DevTools Extensions")
         );
     }
-} catch (_) {}
+} catch (_) { }
 
 let windows = {};
 
+electronUtils.prepareApp(app);
+
 Menu.setApplicationMenu(null);
-function createWindow(targetUrl) {
-    /**
-     * Initial window options
-     */
-    let currentWindow = new BrowserWindow({
-        icon: path.resolve(__dirname, "icons/icon.png"), // tray icon
-        width: 1200,
-        height: 700,
-        useContentSize: true,
-        webPreferences: {
-            contextIsolation: true,
-            // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
-            preload: path.resolve(
-                __dirname,
-                process.env.QUASAR_ELECTRON_PRELOAD
-            ),
-            session: "persist:main",
-        },
-    });
 
-    windows[targetUrl] = currentWindow;
-    // mainWindow.loadURL(process.env.APP_URL);
-    currentWindow.loadURL(targetUrl);
-
-    currentWindow.webContents.on("did-finish-load", function () {
-        bindMsgCenter(ipcMain, windows);
-    });
-    currentWindow.webContents.setWindowOpenHandler(({ url }) => {
-        console.log(url);
-        // shell.openExternal(url);
-        // return { action: "deny" };
-        return { action: "allow" };
-    });
-
-    if (process.env.DEBUGGING) {
-        // if on DEV or Production with debug enabled
-        currentWindow.webContents.openDevTools();
-    } else {
-        // we're on production; no access to devtools pls
-        // mainWindow.webContents.on('devtools-opened', () => {
-        //     mainWindow.webContents.closeDevTools()
-        // })
-    }
-
-    currentWindow.on("closed", () => {
-        currentWindow = null;
-    });
+function init() {
+    let defaultUrl = config.default_url;
+    electronUtils.createWindow(defaultUrl, {}, windows);
+    setInterval(() => {
+        let allWindows = BrowserWindow.getAllWindows();
+        for (let win of allWindows) {
+            let win_id = win.id;
+            if (!Reflect.has(windows, win_id)) {
+                electronUtils.bindWindowEvents(win, windows);
+            }
+        }
+    }, 1000);
 }
 
 app.whenReady().then(() => {
-    let defaultUrl = "https://ggfw.hrss.gd.gov.cn/"
-    createWindow(defaultUrl);
-    session
-        .fromPartition("persist:main")
-        .setPermissionRequestHandler((webContents, permission, callback) => {
-            const parsedUrl = new URL(webContents.getURL());
-            console.log(parsedUrl);
-            if (permission === "notifications") {
-                // Approves the permissions request
-                callback(true);
-            }
-
-            // Verify URL
-            if (
-                parsedUrl.protocol !== "https:" ||
-                parsedUrl.host !== "baidu.com"
-            ) {
-                // Denies the permissions request
-                return callback(false);
-            }
-        });
+    init();
 });
 
 app.on("window-all-closed", () => {
-    if (platform !== "darwin") {
-        app.quit();
-    }
+    app.quit();
 });
 
 app.on("activate", () => {
-    if (mainWindow === null) {
-        createWindow();
+    if (Object.keys(windows).length == 0) {
+        init();
     }
 });

@@ -41,14 +41,14 @@ log4js.configure({
             keepFileExt: true, // 文件名是否需要加".log"后缀
             alwaysIncludePattern: true
         },
-        renderProccessLog: {
+        renderProcessLog: {
             type: "dateFile",
             filename: path.join(LOG_PATH, 'renderer'),
             pattern: ".yyyy-MM-dd.log",
             keepFileExt: true,
             alwaysIncludePattern: true
         },
-        mainProccessLog: {
+        mainProcessLog: {
             type: 'file',
             filename: path.join(LOG_PATH, 'main.log'),
             keepFileExt: true,
@@ -89,11 +89,11 @@ log4js.configure({
             level: "debug"
         },
         main: {
-            appenders: ['out', 'mainProccessLog'],
+            appenders: ['out', 'mainProcessLog'],
             level: "debug"
         },
         renderer: {
-            appenders: ['renderProccessLog'],
+            appenders: ['renderProcessLog'],
             level: "debug"
         },
         crash: {

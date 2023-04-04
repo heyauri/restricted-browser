@@ -10,7 +10,7 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
-        <q-toolbar-title>rebr</q-toolbar-title>
+        <q-toolbar-title>Br</q-toolbar-title>
 
         <div>v1.0.1Beta</div>
       </q-toolbar>

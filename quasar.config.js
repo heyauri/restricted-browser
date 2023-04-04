@@ -14,7 +14,11 @@ const { configure } = require('quasar/wrappers');
 
 module.exports = configure(function (/* ctx */) {
     return {
-
+        sourceFiles: {
+            electronMain: 'src-electron/electron-main.js',
+            electronPreload: 'src-electron/preload/electron-preload.js',
+            electronChildPreload: 'src-electron/preload/electron-preload.js'
+        },
 
         // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
         // preFetch: true,
@@ -182,21 +186,29 @@ module.exports = configure(function (/* ctx */) {
 
                 // Windows only
                 // win32metadata: { ... }
+                extraResource: ["./common"]
             },
 
             builder: {
                 // https://www.electron.build/configuration/configuration
                 appId: 'rebr',
+                extraResources: [
+                    {
+                        "from": "./common",
+                        "to": "./common",
+                        "filter": ["**/*"]
+                    }
+                ],
                 win: {
                     publisherName: "rebr-ia32",
                     target: {
                         target: "nsis",
-                        // arch: ["ia32","x64"]
-                        arch: ["x64"]
+                        arch: ["ia32"]
+                        // arch: ["x64"]
                     }
                 },
                 // win:{
-                //   publisherName:"bcci_helper-x64",
+                //   publisherName:"rebr-x64",
                 //   target: {
                 //     target: "nsis",
                 //     // arch: ["ia32","x64"]
