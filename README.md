@@ -5,7 +5,7 @@
   <br>
 </h2>
 
-An electron-based web-browser which is only able to access the associated webpage according to the preset configuration.
+An electron-based web browser that can only access the associated web page according to the preset configuration.
 
 ## Usage
 
