@@ -49,21 +49,22 @@ export let isObject = function (data) {
 /**
  *  init the config place
  */
-let savePathBase,
+let configPathBase,
     dataDirName = 'rebr-config'
 try {
-    if (!savePathBase) {
-        if (!fs.existsSync(path.join(userData, dataDirName))) {
-            fs.mkdirSync(path.join(userData, dataDirName))
+    let baseDir = app.getAppPath();
+    if (!configPathBase) {
+        if (!fs.existsSync(path.join(baseDir, dataDirName))) {
+            fs.mkdirSync(path.join(baseDir, dataDirName))
         }
-        savePathBase = path.join(userData, dataDirName)
+        configPathBase = path.join(baseDir, dataDirName)
     }
 } catch (e) {
     console.log(e);
 }
 
-export let getDataSavePath = function () {
-    return savePathBase
+export let getConfigPathBase = function () {
+    return configPathBase
 }
 
 export let getLogPath = function () {
@@ -71,7 +72,7 @@ export let getLogPath = function () {
 }
 
 export let getConfig = function () {
-    let fp = path.join(savePathBase, 'config.js');
+    let fp = path.join(configPathBase, 'config.js');
     if (!fs.existsSync(fp)) {
         let dirPath;
         if (process.env.DEBUGGING) {
@@ -81,7 +82,7 @@ export let getConfig = function () {
             dirPath = process.resourcesPath
         }
         let srcFilePath = path.join(dirPath, 'common/config-template.js');
-        console.log("Template Address:",srcFilePath)
+        console.log("Template Address:", srcFilePath)
         fs.copyFileSync(srcFilePath, fp);
     }
     let config = require(fp);

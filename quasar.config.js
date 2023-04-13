@@ -173,7 +173,7 @@ module.exports = configure(function (/* ctx */) {
 
             inspectPort: 5858,
 
-            bundler: 'packager', // 'packager' or 'builder'
+            bundler: 'builder', // 'packager' or 'builder'
 
             packager: {
                 // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
@@ -207,6 +207,10 @@ module.exports = configure(function (/* ctx */) {
                         // arch: ["x64"]
                     }
                 },
+                nsis: {
+                    "oneClick": false,
+                    "allowToChangeInstallationDirectory": true
+                }
                 // win:{
                 //   publisherName:"rebr-x64",
                 //   target: {
