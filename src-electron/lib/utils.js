@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const config = require('config')
 
-import { app } from 'electron'
+import { app, Notification,dialog } from 'electron'
 
 let userData = app.getPath('userData')
 const LOG_PATH = path.join(app.getPath('userData'), 'logs')
