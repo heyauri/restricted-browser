@@ -18,6 +18,15 @@ const URL = require("url-parse");
 let config = utils.getConfig() || configTemplate;
 import { bindMsgCenter } from "./msg-center";
 
+let BrowserWindowConfig = {
+    minimizable: true
+};
+if (config.browser_window && utils.isObject(config.browser_window)) {
+    if (Reflect.has(config.browser_window, "minimizable") && config.browser_window.minimizable == false) {
+        BrowserWindowConfig.minimizable = false;
+    }
+}
+
 function prepareApp(app) {
     try {
         if (config.proxy_server !== false) {
@@ -113,6 +122,7 @@ function bindWindowEvents(currentWindow, windows) {
                 action: "allow",
                 overrideBrowserWindowOptions: {
                     title: "browser window",
+                    minimizable: BrowserWindowConfig.minimizable,
                     webPreferences: {
                         userAgent: utils.getUserAgent(),
                         contextIsolation: true,
@@ -145,15 +155,6 @@ function bindWindowEvents(currentWindow, windows) {
         Reflect.deleteProperty(windows, curr_window_id);
         currentWindow = null;
     });
-}
-
-let BrowserWindowConfig = {
-    minimizable: true
-};
-if (config.browser_window && utils.isObject(config.browser_window)) {
-    if (Reflect.has(config.browser_window, "minimizable") && config.browser_window.minimizable == false) {
-        BrowserWindowConfig.minimizable = false;
-    }
 }
 
 function createWindow(targetUrl, options = {}, windows) {

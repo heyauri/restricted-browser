@@ -19,7 +19,7 @@
 
 import { contextBridge, ipcRenderer, desktopCapturer } from 'electron';
 contextBridge.exposeInMainWorld(
-    "api", {
+    "rebrExposedApi", {
     send: (channel, data) => {
         // whitelist channels
         let validChannels = ["toMain"];
