@@ -1,6 +1,6 @@
 {
     "name": "restricted_browser",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "An electron-based web browser that can only access the associated web page according to the preset configuration.",
     "productName": "Rebr",
     "author": "heyauri",

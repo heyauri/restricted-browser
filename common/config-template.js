@@ -33,5 +33,8 @@ module.exports = {
         title: "Warning",
         message: "The target webpage is not allowed to be accessed.",
         show_configuration_path: true
+    },
+    browser_window: {
+        minimizable: true
     }
 }

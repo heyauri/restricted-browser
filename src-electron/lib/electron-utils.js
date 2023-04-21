@@ -147,6 +147,15 @@ function bindWindowEvents(currentWindow, windows) {
     });
 }
 
+let BrowserWindowConfig = {
+    minimizable:true
+};
+if(config.browser_window){
+    if(Reflect.has(config.browser_window,minimizable)&&config.browser_window.minimizable==false){
+        BrowserWindowConfig.minimizable = false;
+    }
+}
+
 function createWindow(targetUrl, options = {}, windows) {
     /**
      * Initial window options
@@ -156,6 +165,7 @@ function createWindow(targetUrl, options = {}, windows) {
         icon: path.resolve(__dirname, "../../public/favicon.png"), // tray icon
         width: 1200,
         height: 700,
+        minimizable:BrowserWindowConfig.minimizable,
         useContentSize: true,
         webPreferences: {
             userAgent: utils.getUserAgent(),

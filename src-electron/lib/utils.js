@@ -50,18 +50,7 @@ export let isObject = function (data) {
  *  init the config place
  */
 let configPathBase,
-    dataDirName = 'rebr-config'
-try {
-    let baseDir = app.getAppPath();
-    if (!configPathBase) {
-        if (!fs.existsSync(path.join(baseDir, dataDirName))) {
-            fs.mkdirSync(path.join(baseDir, dataDirName))
-        }
-        configPathBase = path.join(baseDir, dataDirName)
-    }
-} catch (e) {
-    console.log(e);
-}
+    dataDirName = 'rebr-config';
 
 export let getConfigPathBase = function () {
     return configPathBase
@@ -71,7 +60,28 @@ export let getLogPath = function () {
     return LOG_PATH
 }
 
+function setConfigDir(inDir){
+    try {
+        // let baseDir = path.dirname(app.getAppPath());
+        let baseDir = inDir;
+        if (!configPathBase) {
+            if (!fs.existsSync(path.join(baseDir, dataDirName))) {
+                fs.mkdirSync(path.join(baseDir, dataDirName))
+            }
+            configPathBase = path.join(baseDir, dataDirName)
+        }
+    } catch (e) {
+        console.log(e);
+    }
+    return configPathBase;
+}
+
 export let getConfig = function () {
+    configPathBase = setConfigDir(path.dirname(app.getPath("exe")));
+    if(!configPathBase){
+        configPathBase = setConfigDir(userData);
+    }
+    console.log(configPathBase);
     let fp = path.join(configPathBase, 'config.js');
     if (!fs.existsSync(fp)) {
         let dirPath;
