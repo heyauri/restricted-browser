@@ -26,22 +26,22 @@ export default defineComponent({
         console.log(this.$store)
         let emit = _this.$global.$emit;
         let send2main = function (data) {
-            window.api.send("toMain", Object.assign({
+            window.rebrExposedApi.send("toMain", Object.assign({
                 source: "main",
             }, data));
         }
         const store = mainStore();
-        let cId = setInterval(() => {
-            if (!store.dataSrc) {
-                send2main({ msg: "getAssetsPath" });
-            } else {
-                clearInterval(cId);
-            }
-        }, 1000);
+        // let cId = setInterval(() => {
+        //     if (!store.dataSrc) {
+        //         send2main({ msg: "getAssetsPath" });
+        //     } else {
+        //         clearInterval(cId);
+        //     }
+        // }, 1000);
         /**
          * 主界面消息中心部分
          */
-        window.api.receive("fromMain", (res) => {
+        window.rebrExposedApi.receive("fromMain", (res) => {
             console.log(`Received msg from main process`);
             let msg = res["msg"];
             switch (msg) {

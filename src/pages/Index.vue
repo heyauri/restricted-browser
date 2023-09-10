@@ -1,6 +1,6 @@
 <template>
     <q-page class="column juestify-start" style="width: 100%">
-        <div class="row items-center" style="width: 100%;height:120px;">
+        <!-- <div class="row items-center" style="width: 100%;height:120px;">
             <div class="col-8 q-pa-lg">
                 <q-input outlined color="primary" v-model="targetUrl" label="网址" placeholder="以http://或https://开头的目标页面">
                 </q-input>
@@ -8,8 +8,8 @@
             <div class="col-3 q-pa-sm text-right">
                 <q-btn size="md" align="between" color="secondary" label="访问网站" icon="check" @click="accessWebpage" />
             </div>
-        </div>
-        <div class="column" style="width: 98%; margin: 20px auto;" v-if="msgArr.length > 0">
+        </div> -->
+        <!-- <div class="column" style="width: 98%; margin: 20px auto;" v-if="msgArr.length > 0">
             <p style="font-size:1.5em;padding:10px 40px;margin:0">消息记录</p>
             <div style="width: 80%; max-width: 1200px;  margin: 20px auto;">
                 <div v-for="(item, index) in msgArr" :key="index">
@@ -17,7 +17,7 @@
                         :text="[item['content'] || item['responseText']]" :stamp="item['t']" />
                 </div>
             </div>
-        </div>
+        </div> -->
     </q-page>
 </template>
 

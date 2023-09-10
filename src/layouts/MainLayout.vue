@@ -10,13 +10,13 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
-        <q-toolbar-title>Br</q-toolbar-title>
+        <q-toolbar-title>{{"REBR"}}</q-toolbar-title>
 
         <div>v1.0.1Beta</div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" bordered>
+    <!-- <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list>
         <q-item-label header>菜单</q-item-label>
         <EssentialLink
@@ -25,7 +25,7 @@
           v-bind="link"
         />
       </q-list>
-    </q-drawer>
+    </q-drawer> -->
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -61,11 +61,9 @@ import { defineComponent, ref } from "vue";
 
 export default defineComponent({
   name: "MainLayout",
-
   components: {
     EssentialLink,
   },
-
   setup() {
     const leftDrawerOpen = ref(false);
     return {

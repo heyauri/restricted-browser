@@ -19,10 +19,13 @@ let config = utils.getConfig() || configTemplate;
 import { bindMsgCenter } from "./msg-center";
 
 let BrowserWindowConfig = {
-    minimizable: true
+    minimizable: true,
 };
 if (config.browser_window && utils.isObject(config.browser_window)) {
-    if (Reflect.has(config.browser_window, "minimizable") && config.browser_window.minimizable == false) {
+    if (
+        Reflect.has(config.browser_window, "minimizable") &&
+        config.browser_window.minimizable == false
+    ) {
         BrowserWindowConfig.minimizable = false;
     }
 }
@@ -30,13 +33,16 @@ if (config.browser_window && utils.isObject(config.browser_window)) {
 function prepareApp(app) {
     try {
         if (config.proxy_server !== false) {
-            app.commandLine.appendSwitch('proxy-server', config.proxy_server)
+            app.commandLine.appendSwitch("proxy-server", config.proxy_server);
         }
         if (config.proxy_pac_url !== false) {
-            app.commandLine.appendSwitch('proxy-pac-url', config.proxy_pac_url)
+            app.commandLine.appendSwitch("proxy-pac-url", config.proxy_pac_url);
         }
         if (config.proxy_bypass_list !== false) {
-            app.commandLine.appendSwitch('proxy-bypass-list', config.proxy_bypass_list)
+            app.commandLine.appendSwitch(
+                "proxy-bypass-list",
+                config.proxy_bypass_list
+            );
         }
     } catch (e) {
         console.error(e);
@@ -44,7 +50,11 @@ function prepareApp(app) {
 }
 
 function checkWhiteListUrl(url) {
-    if (!config.white_list_patterns || !utils.isArray(config.white_list_patterns) || config.white_list_patterns.length == 0) {
+    if (
+        !config.white_list_patterns ||
+        !utils.isArray(config.white_list_patterns) ||
+        config.white_list_patterns.length == 0
+    ) {
         return true;
     }
     let parsedUrl = new URL(url);
@@ -53,7 +63,7 @@ function checkWhiteListUrl(url) {
         pattern.lastIndex = 0;
         let testRes = pattern.test(hostname);
         if (testRes) {
-            console.log(pattern, hostname)
+            console.log(pattern, hostname);
             return true;
         }
     }
@@ -61,7 +71,11 @@ function checkWhiteListUrl(url) {
 }
 
 function checkBlackListUrl(url) {
-    if (!config.checkBlackListUrl || !utils.isArray(config.checkBlackListUrl) || config.checkBlackListUrl.length == 0) {
+    if (
+        !config.checkBlackListUrl ||
+        !utils.isArray(config.checkBlackListUrl) ||
+        config.checkBlackListUrl.length == 0
+    ) {
         return true;
     }
     let parsedUrl = new URL(url);
@@ -76,8 +90,9 @@ function checkBlackListUrl(url) {
 }
 
 function checkUrl(url) {
-    let white_list_result = checkWhiteListUrl(url), black_list_result = checkBlackListUrl(url);
-    console.log(url, white_list_result, black_list_result)
+    let white_list_result = checkWhiteListUrl(url),
+        black_list_result = checkBlackListUrl(url);
+    console.log(url, white_list_result, black_list_result);
     return white_list_result && black_list_result;
 }
 
@@ -86,8 +101,8 @@ function showWarningDialog(options = {}) {
     dialog.showMessageBoxSync(currentWindow, {
         title: options["title"] || config.warning_dialog.title,
         message: options["message"] || config.warning_dialog.message,
-        icon: path.resolve(__dirname, "../../public/favicon.png")
-    })
+        icon: path.resolve(__dirname, "../../public/favicon.png"),
+    });
 }
 
 function bindWindowEvents(currentWindow, windows) {
@@ -96,7 +111,7 @@ function bindWindowEvents(currentWindow, windows) {
         console.log("load url failed: " + targetUrl);
         showWarningDialog();
         currentWindow.close();
-    })
+    });
     currentWindow.webContents.on("did-finish-load", function () {
         windows[curr_window_id] = currentWindow;
         // console.log(windows);
@@ -109,7 +124,7 @@ function bindWindowEvents(currentWindow, windows) {
             showWarningDialog();
             event.preventDefault();
         }
-    })
+    });
     currentWindow.webContents.setWindowOpenHandler((detail) => {
         let url = detail.url;
         /**
@@ -131,15 +146,14 @@ function bindWindowEvents(currentWindow, windows) {
                             __dirname,
                             process.env.QUASAR_ELECTRON_PRELOAD
                         ),
-                        plugins: true
+                        plugins: true,
                     },
-                }
-            }
+                },
+            };
         }
         console.log(url, "denied to access");
         return { action: "deny" };
     });
-
 
     if (process.env.DEBUGGING) {
         // if on DEV or Production with debug enabled
@@ -176,18 +190,16 @@ function createWindow(targetUrl, options = {}, windows) {
                 __dirname,
                 process.env.QUASAR_ELECTRON_PRELOAD
             ),
-            plugins: true
+            plugins: true,
         },
     });
     // mainWindow.loadURL(process.env.APP_URL);
+    if (options && options.name) {
+        windows[options.name] = currentWindow;
+    }
     currentWindow.loadURL(targetUrl, options);
     currentWindow.maximize();
     bindWindowEvents(currentWindow, windows);
 }
 
-export {
-    prepareApp,
-    createWindow,
-    bindWindowEvents,
-    config
-}
+export { prepareApp, createWindow, bindWindowEvents, config };

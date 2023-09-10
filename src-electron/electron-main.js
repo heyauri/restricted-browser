@@ -25,7 +25,7 @@ try {
             path.join(app.getPath("userData"), "DevTools Extensions")
         );
     }
-} catch (_) { }
+} catch (_) {}
 
 let windows = {};
 
@@ -35,12 +35,16 @@ Menu.setApplicationMenu(null);
 
 function init() {
     let defaultUrl = config.default_url;
-    electronUtils.createWindow(defaultUrl, {}, windows);
+    let mainWindowUrl = process.env.APP_URL;
+    // mainWindow.loadURL(process.env.APP_URL);
+    // electronUtils.createWindow(defaultUrl, {}, windows);
+    electronUtils.createWindow(mainWindowUrl, { name: "mainWindow" }, windows);
     setInterval(() => {
         let allWindows = BrowserWindow.getAllWindows();
         for (let win of allWindows) {
             let win_id = win.id;
             if (!Reflect.has(windows, win_id)) {
+                console.log(win_id);
                 electronUtils.bindWindowEvents(win, windows);
             }
         }

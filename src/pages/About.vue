@@ -59,11 +59,11 @@ export default defineComponent({
     mounted() {
         //@ts-ignore
         let _this = this;
-        setTimeout(() => {
-            _this.logSrc = store.$state.logSrc;
-            console.log(_this.logSrc);
-            _this.dataSrc = store.$state.dataSrc;
-        }, 500)
+        // setTimeout(() => {
+        //     _this.logSrc = store.$state.logSrc;
+        //     console.log(_this.logSrc);
+        //     _this.dataSrc = store.$state.dataSrc;
+        // }, 500)
     }
 });
 </script>

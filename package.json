@@ -11,21 +11,21 @@
         "build": "quasar build -m electron"
     },
     "dependencies": {
-        "@quasar/cli": "^2.0.0",
-        "@quasar/extras": "^1.16.2",
+        "@quasar/cli": "^2.2.3",
+        "@quasar/extras": "^1.16.6",
         "axios": "^0.21.4",
         "config": "^3.3.9",
         "log4js": "^6.9.1",
         "moment": "^2.29.4",
         "pinia": "^2.0.33",
-        "quasar": "^2.11.10",
+        "quasar": "^2.12.6",
         "tiny-emitter": "^2.1.0",
         "url-parse": "^1.5.10",
         "vue": "^3.2.47",
         "vue-router": "^4.1.6"
     },
     "devDependencies": {
-        "@quasar/app-vite": "^1.2.1",
+        "@quasar/app-vite": "^1.5.1",
         "@types/node": "^18.15.11",
         "autoprefixer": "^10.4.14",
         "electron": "^24.0.0",
