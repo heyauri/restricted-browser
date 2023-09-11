@@ -24,28 +24,34 @@ let send2win = utils.send2win;
  */
 async function bindMsgCenter(ipcMain, windows) {
     let mainWindow = windows.mainWindow;
+    ipcMain.removeListener("toMain", () => { });
     ipcMain.on("toMain", async (event, args) => {
-        let source = args["source"];
-        if (mainWindow === null) {
-            // app.quit();
-            return;
-        }
-        switch (source) {
-            case "main":
-                send2win(mainWindow, { msg: "mainReceive" });
-                log.operation.info("main", args);
-                switch (args["msg"]) {
-                    case "getAssetsPath":
-                        send2win(mainWindow, {
-                            msg: "assetsPaths",
-                            data: {
-                                logSrc: utils.getLogPath(),
-                                dataSrc: utils.getDataSavePath(),
-                            },
-                        });
-                        break;
-                }
-                break;
+        try {
+            let source = args["source"];
+            if (mainWindow === null) {
+                // app.quit();
+                return;
+            }
+            switch (source) {
+                case "main":
+                    send2win(mainWindow, { msg: "mainReceive" });
+                    log.operation.info("main", args);
+                    switch (args["msg"]) {
+                        case "getBasicData":
+                            send2win(mainWindow, {
+                                msg: "basicDataInit",
+                                data: {
+                                    logSrc: utils.getLogPath(),
+                                    dataSrc: utils.getLogPath(),
+                                    basicData: utils.getConfig()
+                                },
+                            });
+                            break;
+                    }
+                    break;
+            }
+        } catch (e) {
+            console.error("msg center error", e, args)
         }
     });
 }

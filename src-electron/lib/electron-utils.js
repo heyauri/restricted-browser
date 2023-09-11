@@ -29,7 +29,12 @@ if (config.browser_window && utils.isObject(config.browser_window)) {
         BrowserWindowConfig.minimizable = false;
     }
 }
-
+/**
+ *
+ * @param {*} app
+ *
+ * proxies related config will be applied on all web access
+ */
 function prepareApp(app) {
     try {
         if (config.proxy_server !== false) {
@@ -49,17 +54,17 @@ function prepareApp(app) {
     }
 }
 
-function checkWhiteListUrl(url) {
+function checkWhiteListUrl(url, white_list_patterns = []) {
     if (
-        !config.white_list_patterns ||
-        !utils.isArray(config.white_list_patterns) ||
-        config.white_list_patterns.length == 0
+        !white_list_patterns ||
+        !utils.isArray(white_list_patterns) ||
+        white_list_patterns.length == 0
     ) {
         return true;
     }
     let parsedUrl = new URL(url);
     let hostname = parsedUrl.hostname;
-    for (let pattern of config.white_list_patterns) {
+    for (let pattern of white_list_patterns) {
         pattern.lastIndex = 0;
         let testRes = pattern.test(hostname);
         if (testRes) {
@@ -70,17 +75,17 @@ function checkWhiteListUrl(url) {
     return false;
 }
 
-function checkBlackListUrl(url) {
+function checkBlackListUrl(url, black_list_patterns = []) {
     if (
-        !config.checkBlackListUrl ||
-        !utils.isArray(config.checkBlackListUrl) ||
-        config.checkBlackListUrl.length == 0
+        !black_list_patterns ||
+        !utils.isArray(black_list_patterns) ||
+        black_list_patterns.length == 0
     ) {
         return true;
     }
     let parsedUrl = new URL(url);
     let hostname = parsedUrl.hostname;
-    for (let pattern of config.checkBlackListUrl) {
+    for (let pattern of black_list_patterns) {
         pattern.lastIndex = 0;
         if (pattern.test(hostname)) {
             return false;
@@ -194,12 +199,13 @@ function createWindow(targetUrl, options = {}, windows) {
         },
     });
     // mainWindow.loadURL(process.env.APP_URL);
+    windows[currentWindow.id] = currentWindow;
     if (options && options.name) {
         windows[options.name] = currentWindow;
     }
     currentWindow.loadURL(targetUrl, options);
     currentWindow.maximize();
-    bindWindowEvents(currentWindow, windows);
+    bindWindowEvents(currentWindow, windows, options);
 }
 
 export { prepareApp, createWindow, bindWindowEvents, config };

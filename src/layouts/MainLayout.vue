@@ -1,22 +1,15 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-        <q-toolbar-title>{{"REBR"}}</q-toolbar-title>
+    <q-layout view="lHh Lpr lFf">
+        <q-header elevated>
+            <q-toolbar>
+                <!-- <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" /> -->
+                <q-toolbar-title>{{ basicData["title"] || "REBR" }}</q-toolbar-title>
 
-        <div>v1.0.1Beta</div>
-      </q-toolbar>
-    </q-header>
+                <!-- <div>v1.0.1Beta</div> -->
+            </q-toolbar>
+        </q-header>
 
-    <!-- <q-drawer v-model="leftDrawerOpen" bordered>
+        <!-- <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list>
         <q-item-label header>菜单</q-item-label>
         <EssentialLink
@@ -26,56 +19,61 @@
         />
       </q-list>
     </q-drawer> -->
-    <q-page-container>
-      <router-view />
-    </q-page-container>
-    <!-- <predictor></predictor> -->
-  </q-layout>
+        <q-page-container>
+            <router-view />
+        </q-page-container>
+        <!-- <predictor></predictor> -->
+    </q-layout>
 </template>
 
 <script lang="ts">
 import EssentialLink from "components/EssentialLink.vue";
 
 const linksList = [
-  {
-    title: "主界面",
-    caption: "访问页面",
-    icon: "search",
-    link: "/main",
-  },
-  {
-    title: "关于",
-    caption: "查看软件说明",
-    icon: "code",
-    link: "/about",
-  },
-  // {
-  //   title: "设置",
-  //   caption: "进行软件设置",
-  //   icon: "support",
-  //   link: "/setting",
-  // }
+    {
+        title: "主界面",
+        caption: "访问页面",
+        icon: "search",
+        link: "/main",
+    },
+    {
+        title: "关于",
+        caption: "查看软件说明",
+        icon: "code",
+        link: "/about",
+    },
+    // {
+    //   title: "设置",
+    //   caption: "进行软件设置",
+    //   icon: "support",
+    //   link: "/setting",
+    // }
 ];
 
 import { defineComponent, ref } from "vue";
+import { mainStore } from "../stores/main-store";
 
 export default defineComponent({
-  name: "MainLayout",
-  components: {
-    EssentialLink,
-  },
-  setup() {
-    const leftDrawerOpen = ref(false);
-    return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
-    };
-  },
-  mounted(){
+    name: "MainLayout",
+    components: {
+        EssentialLink,
+    },
+    setup() {
+        const leftDrawerOpen = ref(false);
+        const store = mainStore();
+        let basicData = store.$state.basicData;
+        console.log(basicData);
+        return {
+            basicData,
+            essentialLinks: linksList,
+            leftDrawerOpen,
+            toggleLeftDrawer() {
+                leftDrawerOpen.value = !leftDrawerOpen.value;
+            },
+        };
+    },
+    mounted() {
 
-  }
+    }
 });
 </script>

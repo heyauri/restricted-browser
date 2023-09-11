@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const config = require('config')
 
-import { app, Notification,dialog } from 'electron'
+import { app, Notification, dialog } from 'electron'
 
 let userData = app.getPath('userData')
 const LOG_PATH = path.join(app.getPath('userData'), 'logs')
@@ -16,7 +16,12 @@ export let getUserAgent = function () {
 }
 
 export let send2win = function (window, args) {
-    window.webContents.send('fromMain', args)
+    try {
+        window.webContents.send('fromMain', args)
+    } catch (e) {
+        console.error("send2win error", e, args)
+    }
+
 }
 
 export let streamToBuffer = function (stream) {
@@ -60,7 +65,7 @@ export let getLogPath = function () {
     return LOG_PATH
 }
 
-function setConfigDir(inDir){
+function setConfigDir(inDir) {
     try {
         // let baseDir = path.dirname(app.getAppPath());
         let baseDir = inDir;
@@ -78,21 +83,41 @@ function setConfigDir(inDir){
 
 export let getConfig = function () {
     configPathBase = setConfigDir(path.dirname(app.getPath("exe")));
-    if(!configPathBase){
+    if (!configPathBase) {
         configPathBase = setConfigDir(userData);
     }
     console.log(configPathBase);
     let fp = path.join(configPathBase, 'config.js');
-    if (!fs.existsSync(fp)) {
+    let version_mark = true;
+    if (process.env.DEBUGGING) {
+        // if on DEV or Production with debug enabled
+        version_mark = false;
+    }
+    try {
+        if (fs.existsSync(fp)) {
+            let config = require(fp);
+            if (config) {
+                let v = config.version;
+                if (v != 1) {
+                    version_mark = false;
+                }
+            } else {
+                version_mark = false;
+            }
+        }
+    } catch (e) {
+        console.error(e);
+    }
+    if (!fs.existsSync(fp) || !version_mark) {
         let dirPath;
         if (process.env.DEBUGGING) {
             dirPath = process.cwd()
-
         } else {//发布环境
             dirPath = process.resourcesPath
         }
         let srcFilePath = path.join(dirPath, 'common/config-template.js');
         console.log("Template Address:", srcFilePath)
+        console.log("dst config address:", fp)
         fs.copyFileSync(srcFilePath, fp);
     }
     let config = require(fp);

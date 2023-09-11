@@ -28,7 +28,9 @@ try {
 } catch (_) {}
 
 let windows = {};
-
+/**
+ * Block access via proxies configuration
+ */
 electronUtils.prepareApp(app);
 
 Menu.setApplicationMenu(null);
@@ -44,7 +46,7 @@ function init() {
         for (let win of allWindows) {
             let win_id = win.id;
             if (!Reflect.has(windows, win_id)) {
-                console.log(win_id);
+                console.log("windows not has such id:",win_id);
                 electronUtils.bindWindowEvents(win, windows);
             }
         }

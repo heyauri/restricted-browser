@@ -1,7 +1,15 @@
 /**
  *  The configuration template that will be used to generate the configuration.
+ *
+ *  warning: the proxy related settings will be applied on all sites
  */
 module.exports = {
+    /**
+     * @param {Object} - to mark whether the
+     */
+    version: 1,
+    title: "Restricted Browser",
+    description: "Welcome",
     /**
      * @param {Object} - Shown by dialog when a url is blocked (by proxy mode or url pattern)
      */
@@ -10,6 +18,9 @@ module.exports = {
         message: "The target webpage is not allowed to be accessed.",
         show_configuration_path: true,
     },
+    /**
+     * Setting of the browser window
+     */
     browser_window: {
         minimizable: true,
     },
@@ -25,13 +36,32 @@ module.exports = {
      * @param {boolean or string} - false-> will not set the proxy_bypass_list, otherwise set like "<local>;*foo.com,*.google.com"
      */
     proxy_bypass_list: "<local>;",
+    /**
+     * @param {list<Object>} - all accessible sites that will be shown on home page of the app.
+     */
     accessible_sites: [
         {
-            name: "default",
+            name: "qq",
             /**
              * @param {string} - The path of this site
              */
-            path: "http://localhost:80",
+            path: "http://www.qq.com",
+
+            /**
+             * @param {Array of Regex} - Those hosts do not match the Regex patterns will be blocked, hence all accessible urls should match at least one pattern
+             */
+            white_list_patterns: [/.*/],
+            /**
+             * @param {Array of Regex} - Those hosts match the Regex patterns will be blocked, hence all accessible urls should not match any patterns below
+             */
+            black_list_patterns: [],
+        },
+        {
+            name: "baidu",
+            /**
+             * @param {string} - The path of this site
+             */
+            path: "http://www.baidu.com",
 
             /**
              * @param {Array of Regex} - Those hosts do not match the Regex patterns will be blocked, hence all accessible urls should match at least one pattern

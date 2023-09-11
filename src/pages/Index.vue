@@ -23,11 +23,16 @@
 
 <script lang="js">
 import { defineComponent, ref } from "vue";
-
+import { mainStore } from "../stores/main-store";
 export default defineComponent({
     name: "PageIndex",
     components: {},
-    setup() { },
+    setup() {
+        const store = mainStore();
+        return {
+            basicData: store.basicData
+        }
+    },
     data() {
         return {
             dialogShow: false,

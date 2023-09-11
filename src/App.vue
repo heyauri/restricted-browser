@@ -24,16 +24,19 @@ export default defineComponent({
     mounted() {
         let _this = this;
         console.log(this.$store)
+        const store = mainStore();
+        console.log(store)
         let emit = _this.$global.$emit;
         let send2main = function (data) {
             window.rebrExposedApi.send("toMain", Object.assign({
                 source: "main",
             }, data));
         }
-        const store = mainStore();
-        // let cId = setInterval(() => {
-        //     if (!store.dataSrc) {
-        //         send2main({ msg: "getAssetsPath" });
+        send2main({ msg: "getBasicData" });
+        let cId;
+        // cId = setInterval(() => {
+        //     if (!store.basicData) {
+        //         send2main({ msg: "getBasicData" });
         //     } else {
         //         clearInterval(cId);
         //     }
@@ -45,16 +48,19 @@ export default defineComponent({
             console.log(`Received msg from main process`);
             let msg = res["msg"];
             switch (msg) {
-                case "assetsPaths":
-                    let assets = res["data"];
-                    console.log(assets);
+                case "basicDataInit":
+                    let basicData = res["data"];
+                    console.log(basicData);
                     clearInterval(cId);
                     store.$patch((state) => {
-                        state.logSrc = assets["logSrc"] || "";
-                        state.dataSrc = assets["dataSrc"] || ""
+                        state.logSrc = basicData["logSrc"] || "";
+                        state.dataSrc = basicData["dataSrc"] || "";
+                        state.basicData = basicData["basicData"] || {}
                     });
+                    break;
                 case "xhrData":
                     _this.$global.$emit("xhrMsg", res["data"]);
+                    break;
                 // console.log(store);
                 // console.log(store.$state.logSrc, store.$state.dataSrc);
                 // console.log(store.logSrcPath, store.dataSrcPath);
