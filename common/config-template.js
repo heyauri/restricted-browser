@@ -9,7 +9,17 @@ module.exports = {
      */
     version: 1,
     title: "Restricted Browser",
-    description: "Welcome",
+    homepage_setting: {
+        title: "Welcome",
+        description: "Welcome",
+        instruction: {
+            title: "instruction",
+            toggle_label: "Show Instruction",
+            chats: [{ name: "User", avatar: "unicorn_1.png", messages: ['Hey Chatgpt!', 'How to use this app?'], sent: true },
+            { name: "App", avatar: "unicorn_5.png", messages: ['It is quite easy!', 'You can directly click the link below and access the associated webpage under the preset manner.'], sent: false }],
+        },
+        link_title: "Links"
+    },
     /**
      * @param {Object} - Shown by dialog when a url is blocked (by proxy mode or url pattern)
      */
@@ -46,7 +56,6 @@ module.exports = {
              * @param {string} - The path of this site
              */
             path: "http://www.qq.com",
-
             /**
              * @param {Array of Regex} - Those hosts do not match the Regex patterns will be blocked, hence all accessible urls should match at least one pattern
              */
@@ -62,7 +71,6 @@ module.exports = {
              * @param {string} - The path of this site
              */
             path: "http://www.baidu.com",
-
             /**
              * @param {Array of Regex} - Those hosts do not match the Regex patterns will be blocked, hence all accessible urls should match at least one pattern
              */

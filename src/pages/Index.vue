@@ -1,23 +1,40 @@
 <template>
-    <q-page class="column juestify-start" style="width: 100%">
-        <!-- <div class="row items-center" style="width: 100%;height:120px;">
-            <div class="col-8 q-pa-lg">
-                <q-input outlined color="primary" v-model="targetUrl" label="网址" placeholder="以http://或https://开头的目标页面">
-                </q-input>
+    <q-page class="q-pa-md column juestify-start" style="width: 100%">
+        <div class="row">
+            <div class="q-pa-md col-6">
+                <h3 v-if="basicData.homepage_setting.title" style="margin:0">{{ basicData.homepage_setting.title }}
+                </h3>
+                <p class="q-pa-sm" v-if="basicData.homepage_setting.description" style="margin:0">{{
+                    basicData.homepage_setting.description }}</p>
             </div>
-            <div class="col-3 q-pa-sm text-right">
-                <q-btn size="md" align="between" color="secondary" label="访问网站" icon="check" @click="accessWebpage" />
-            </div>
-        </div> -->
-        <!-- <div class="column" style="width: 98%; margin: 20px auto;" v-if="msgArr.length > 0">
-            <p style="font-size:1.5em;padding:10px 40px;margin:0">消息记录</p>
-            <div style="width: 80%; max-width: 1200px;  margin: 20px auto;">
-                <div v-for="(item, index) in msgArr" :key="index">
-                    <q-chat-message :name="`${item['url']} ${item['status']}`"
-                        :text="[item['content'] || item['responseText']]" :stamp="item['t']" />
+            <div class="col q-pa-sm text-right"> <q-toggle v-model="showChats" color="green"
+                    v-if="basicData.homepage_setting.instruction"
+                    :label="basicData.homepage_setting.instruction.toggle_label" /></div>
+        </div>
+        <section>
+            <div v-if="showChats && basicData.homepage_setting.instruction.chats" class="q-pa-md row justify-center"
+                style="border:1px dashed #ddd">
+                <div style="width: 100%; max-width: 800px">
+                    <template v-for="(chat, key) in basicData.homepage_setting.instruction.chats" :key="key">
+                        <q-chat-message :name="chat.name" :avatar="chat.avatar" :text="chat.messages" :sent="chat.sent"
+                            text-color="white" :bg-color="chat.sent ? 'positive' : 'primary'" /></template>
                 </div>
             </div>
-        </div> -->
+        </section>
+        <section class="q-pa-md">
+            <h5 class="q-pa-md" style="margin:0">{{ basicData.homepage_setting.link_title }}</h5>
+            <q-list v-if="basicData.accessible_sites">
+                <template v-for="(item, key) in basicData.accessible_sites" :key="key">
+                    <q-item v-if="item.name && item.path" clickable v-ripple bordered @click="accessWebpage(item)">
+                        <q-item-section avatar>
+                            <q-avatar rounded color="primary" text-color="white" icon="link" />
+                        </q-item-section>
+                        <q-item-section>{{ item.name }}</q-item-section>
+                    </q-item>
+                    <q-separator />
+                </template>
+            </q-list>
+        </section>
     </q-page>
 </template>
 
@@ -30,11 +47,12 @@ export default defineComponent({
     setup() {
         const store = mainStore();
         return {
-            basicData: store.basicData
+            basicData: store.$state.basicData
         }
     },
     data() {
         return {
+            showChats: true,
             dialogShow: false,
             targetUrl: "https://www.qq.com",
             msgArr: []
@@ -63,14 +81,14 @@ export default defineComponent({
             // @ts-ignore : $global在原型中不存在
             this.$global.$emit(type, msg);
         },
-        accessWebpage() {
-            let url = this.targetUrl;
-            if (!/https:\/\//.test(url) && !/http:\/\//.test(url)) {
-                alert("请输入以http://或https://开头的网址");
-                return;
-            }
-            this.sendMsg("accessUrl", this.targetUrl);
+        accessWebpage(item) {
+            this.sendMsg("accessUrl", item.path);
         }
     },
 });
 </script>
+<style>
+body {
+    background: #eee;
+}
+</style>

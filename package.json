@@ -21,6 +21,7 @@
         "quasar": "^2.12.6",
         "tiny-emitter": "^2.1.0",
         "url-parse": "^1.5.10",
+        "uuid": "^9.0.0",
         "vue": "^3.2.47",
         "vue-router": "^4.1.6"
     },
