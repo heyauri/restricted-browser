@@ -1,16 +1,4 @@
-import {
-    app,
-    BrowserWindow,
-    nativeTheme,
-    BrowserView,
-    ipcMain,
-    ipcRenderer,
-    Menu,
-    autoUpdater,
-    dialog,
-    session,
-    shell,
-} from "electron";
+import { app, BrowserWindow, nativeTheme, BrowserView, ipcMain, ipcRenderer, Menu, autoUpdater, dialog, session, shell } from "electron";
 import path from "path";
 import os from "os";
 import * as electronUtils from "./lib/electron-utils.js";
@@ -21,9 +9,7 @@ const platform = process.platform || os.platform();
 
 try {
     if (platform === "win32" && nativeTheme.shouldUseDarkColors === true) {
-        require("fs").unlinkSync(
-            path.join(app.getPath("userData"), "DevTools Extensions")
-        );
+        require("fs").unlinkSync(path.join(app.getPath("userData"), "DevTools Extensions"));
     }
 } catch (_) {}
 
@@ -46,7 +32,7 @@ function init() {
         for (let win of allWindows) {
             let win_id = win.id;
             if (!Reflect.has(windows, win_id)) {
-                console.log("windows not has such id:",win_id);
+                console.log("windows not has such id:", win_id);
                 electronUtils.bindWindowEvents(win, windows);
             }
         }

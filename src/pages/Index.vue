@@ -82,7 +82,8 @@ export default defineComponent({
             this.$global.$emit(type, msg);
         },
         accessWebpage(item) {
-            this.sendMsg("accessUrl", item.path);
+            console.log(item);
+            this.sendMsg("accessUrl", item);
         }
     },
 });

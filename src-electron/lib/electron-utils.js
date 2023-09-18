@@ -1,15 +1,4 @@
-import {
-    BrowserWindow,
-    nativeTheme,
-    BrowserView,
-    ipcMain,
-    ipcRenderer,
-    Menu,
-    autoUpdater,
-    dialog,
-    session,
-    shell,
-} from "electron";
+import { BrowserWindow, nativeTheme, BrowserView, ipcMain, ipcRenderer, Menu, autoUpdater, dialog, session, shell } from "electron";
 const configTemplate = require("../../common/config-template");
 
 import path from "path";
@@ -22,10 +11,7 @@ let BrowserWindowConfig = {
     minimizable: true,
 };
 if (config.browser_window && utils.isObject(config.browser_window)) {
-    if (
-        Reflect.has(config.browser_window, "minimizable") &&
-        config.browser_window.minimizable == false
-    ) {
+    if (Reflect.has(config.browser_window, "minimizable") && config.browser_window.minimizable == false) {
         BrowserWindowConfig.minimizable = false;
     }
 }
@@ -44,10 +30,7 @@ function prepareApp(app) {
             app.commandLine.appendSwitch("proxy-pac-url", config.proxy_pac_url);
         }
         if (config.proxy_bypass_list !== false) {
-            app.commandLine.appendSwitch(
-                "proxy-bypass-list",
-                config.proxy_bypass_list
-            );
+            app.commandLine.appendSwitch("proxy-bypass-list", config.proxy_bypass_list);
         }
     } catch (e) {
         console.error(e);
@@ -55,11 +38,7 @@ function prepareApp(app) {
 }
 
 function checkWhiteListUrl(url, white_list_patterns = []) {
-    if (
-        !white_list_patterns ||
-        !utils.isArray(white_list_patterns) ||
-        white_list_patterns.length == 0
-    ) {
+    if (!white_list_patterns || !utils.isArray(white_list_patterns) || white_list_patterns.length == 0) {
         return true;
     }
     let parsedUrl = new URL(url);
@@ -76,11 +55,7 @@ function checkWhiteListUrl(url, white_list_patterns = []) {
 }
 
 function checkBlackListUrl(url, black_list_patterns = []) {
-    if (
-        !black_list_patterns ||
-        !utils.isArray(black_list_patterns) ||
-        black_list_patterns.length == 0
-    ) {
+    if (!black_list_patterns || !utils.isArray(black_list_patterns) || black_list_patterns.length == 0) {
         return true;
     }
     let parsedUrl = new URL(url);
@@ -94,9 +69,12 @@ function checkBlackListUrl(url, black_list_patterns = []) {
     return true;
 }
 
-function checkUrl(url) {
-    let white_list_result = checkWhiteListUrl(url),
-        black_list_result = checkBlackListUrl(url);
+function checkUrl(url, options = {}) {
+    let site_configuration = options["site_configuration"] || {};
+    let white_list_patterns = site_configuration["white_list_patterns"] || [];
+    let black_list_patterns = site_configuration["black_list_patterns"] || [];
+    let white_list_result = checkWhiteListUrl(url, white_list_patterns),
+        black_list_result = checkBlackListUrl(url, black_list_patterns);
     console.log(url, white_list_result, black_list_result);
     return white_list_result && black_list_result;
 }
@@ -110,10 +88,24 @@ function showWarningDialog(options = {}) {
     });
 }
 
-function bindWindowEvents(currentWindow, windows) {
+let parent_config_dict = {};
+let current_parent_id = 0;
+
+function bindWindowEvents(currentWindow, windows, options = {}) {
     let curr_window_id = currentWindow.id;
+    console.log("current window id:", curr_window_id);
+    if (!options || (!options.site_configuration && options.name !== "mainWindow")) {
+        // console.log(currentWindow);
+        // console.log(current_parent_id, parent_config_dict);
+        options = parent_config_dict[current_parent_id] || {};
+    }
+    if (options && options.site_configuration) {
+        parent_config_dict[curr_window_id] = options;
+    }
+    windows[curr_window_id] = currentWindow;
     currentWindow.webContents.on("did-fail-load", function () {
         console.log("load url failed: " + targetUrl);
+        windows[curr_window_id] = null;
         showWarningDialog();
         currentWindow.close();
     });
@@ -124,7 +116,7 @@ function bindWindowEvents(currentWindow, windows) {
     });
     currentWindow.webContents.on("will-navigate", function (event, url) {
         console.log(url);
-        if (!checkUrl(url)) {
+        if (!checkUrl(url, options)) {
             console.log(url, "navigate is blocked");
             showWarningDialog();
             event.preventDefault();
@@ -132,28 +124,31 @@ function bindWindowEvents(currentWindow, windows) {
     });
     currentWindow.webContents.setWindowOpenHandler((detail) => {
         let url = detail.url;
+        current_parent_id = curr_window_id;
+        console.log("current_parent_id", current_parent_id);
         /**
          *  Not to use the `createWindow` method because some page are opened via HTTP methods other than get.
-         *  The vanilla implementation can handle this. However, the events' handlers should be binded to the window object later.
+         *  The vanilla implementation can handle this. However, the events' handlers should be bound to the window object later.
          */
-        if (checkUrl(url)) {
+        if (checkUrl(url, options)) {
             console.log(url, "allowed to access");
             return {
                 action: "allow",
+                site_configuration: options["site_configuration"] || {},
                 overrideBrowserWindowOptions: {
                     title: "browser window",
                     minimizable: BrowserWindowConfig.minimizable,
+                    icon: path.resolve(__dirname, "../../public/favicon.png"), // tray icon
                     webPreferences: {
                         userAgent: utils.getUserAgent(),
                         contextIsolation: true,
                         // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
-                        preload: path.resolve(
-                            __dirname,
-                            process.env.QUASAR_ELECTRON_PRELOAD
-                        ),
+                        preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
                         plugins: true,
+                        outlivesOpener: true,
                     },
                 },
+                outlivesOpener: true,
             };
         }
         console.log(url, "denied to access");
@@ -191,10 +186,7 @@ function createWindow(targetUrl, options = {}, windows) {
             userAgent: utils.getUserAgent(),
             contextIsolation: true,
             // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
-            preload: path.resolve(
-                __dirname,
-                process.env.QUASAR_ELECTRON_PRELOAD
-            ),
+            preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
             plugins: true,
         },
     });

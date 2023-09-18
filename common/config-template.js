@@ -15,10 +15,17 @@ module.exports = {
         instruction: {
             title: "instruction",
             toggle_label: "Show Instruction",
-            chats: [{ name: "User", avatar: "unicorn_1.png", messages: ['Hey Chatgpt!', 'How to use this app?'], sent: true },
-            { name: "App", avatar: "unicorn_5.png", messages: ['It is quite easy!', 'You can directly click the link below and access the associated webpage under the preset manner.'], sent: false }],
+            chats: [
+                { name: "User", avatar: "unicorn_1.png", messages: ["Hey Chatgpt!", "How to use this app?"], sent: true },
+                {
+                    name: "App",
+                    avatar: "unicorn_5.png",
+                    messages: ["It is quite easy!", "You can directly click the link below and access the associated webpage under the preset manner."],
+                    sent: false,
+                },
+            ],
         },
-        link_title: "Links"
+        link_title: "Links",
     },
     /**
      * @param {Object} - Shown by dialog when a url is blocked (by proxy mode or url pattern)
@@ -53,7 +60,7 @@ module.exports = {
         {
             name: "qq",
             /**
-             * @param {string} - The path of this site
+             * @param {string} - The path of this site, and this path is considered as an accessible site by default
              */
             path: "http://www.qq.com",
             /**
@@ -74,7 +81,7 @@ module.exports = {
             /**
              * @param {Array of Regex} - Those hosts do not match the Regex patterns will be blocked, hence all accessible urls should match at least one pattern
              */
-            white_list_patterns: [/.*/],
+            white_list_patterns: [/.*baidu.*/],
             /**
              * @param {Array of Regex} - Those hosts match the Regex patterns will be blocked, hence all accessible urls should not match any patterns below
              */

@@ -28,6 +28,7 @@ export default defineComponent({
         console.log(store)
         let emit = _this.$global.$emit;
         let send2main = function (data) {
+            console.log("data", data)
             window.rebrExposedApi.send("toMain", Object.assign({
                 source: "main",
             }, data));
@@ -83,10 +84,12 @@ export default defineComponent({
         });
         _this.$global.$on("accessUrl", data => {
             console.log(data);
+            // let da = Object.prototype.toString.call(data) === '[object Object]' ? JSON.parse(JSON.stringify(data)) : data;
             send2main({
                 source: "main",
                 msg: "accessUrl",
-                target: data
+                target_id: data.uuid,
+                target_path: data.path
             });
         });
     },
