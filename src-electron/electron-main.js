@@ -36,7 +36,7 @@ function init() {
                 electronUtils.bindWindowEvents(win, windows);
             }
         }
-    }, 1000);
+    }, 100);
 }
 
 app.whenReady().then(() => {

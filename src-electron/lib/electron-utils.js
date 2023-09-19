@@ -88,6 +88,10 @@ function showWarningDialog(options = {}) {
     });
 }
 
+/**
+ *  To attach the associated events on windows that are not create by `createWindow` method
+ *  The interval is 100ms -> if the user's operation is faster than 100ms, the attachment may not success.
+ */
 let parent_config_dict = {};
 let current_parent_id = 0;
 
@@ -120,6 +124,9 @@ function bindWindowEvents(currentWindow, windows, options = {}) {
             console.log(url, "navigate is blocked");
             showWarningDialog();
             event.preventDefault();
+            if (config.warning_dialog.close_triggered_window) {
+                currentWindow.close();
+            }
         }
     });
     currentWindow.webContents.setWindowOpenHandler((detail) => {
