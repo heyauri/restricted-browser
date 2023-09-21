@@ -97,6 +97,7 @@ let current_parent_id = 0;
 
 function bindWindowEvents(currentWindow, windows, options = {}) {
     let curr_window_id = currentWindow.id;
+    let targetUrl = options["targetUrl"] || "";
     console.log("current window id:", curr_window_id);
     if (!options || (!options.site_configuration && options.name !== "mainWindow")) {
         // console.log(currentWindow);
@@ -107,11 +108,20 @@ function bindWindowEvents(currentWindow, windows, options = {}) {
         parent_config_dict[curr_window_id] = options;
     }
     windows[curr_window_id] = currentWindow;
-    currentWindow.webContents.on("did-fail-load", function () {
-        console.log("load url failed: " + targetUrl);
-        windows[curr_window_id] = null;
-        showWarningDialog();
-        currentWindow.close();
+    currentWindow.webContents.on("did-fail-load", function (event, errorCode, errorDescription, validatedURL) {
+        // console.log(event, errorCode, errorDescription, validatedURL)
+        let url = validatedURL || targetUrl || "";
+        if (!checkUrl(url, options)) {
+            console.log("load url failed: " + targetUrl);
+            windows[curr_window_id] = null;
+            showWarningDialog();
+            currentWindow.close();
+        } else {
+            console.log(url);
+            // showWarningDialog({
+            //     message: "页面打开出错!"
+            // });
+        }
     });
     currentWindow.webContents.on("did-finish-load", function () {
         windows[curr_window_id] = currentWindow;
@@ -205,7 +215,7 @@ function createWindow(targetUrl, options = {}, windows) {
     }
     currentWindow.loadURL(targetUrl, options);
     currentWindow.maximize();
-    bindWindowEvents(currentWindow, windows, options);
+    bindWindowEvents(currentWindow, windows, { ...options, targetUrl });
 }
 
 export { prepareApp, createWindow, bindWindowEvents, config };

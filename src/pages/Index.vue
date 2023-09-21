@@ -52,9 +52,8 @@ export default defineComponent({
     },
     data() {
         return {
-            showChats: true,
+            showChats: false,
             dialogShow: false,
-            targetUrl: "https://www.qq.com",
             msgArr: []
         };
     },

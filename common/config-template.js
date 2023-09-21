@@ -88,5 +88,20 @@ module.exports = {
              */
             black_list_patterns: [],
         },
+        {
+            name: "单证",
+            /**
+             * @param {string} - The path of this site
+             */
+            path: "https://gd.singlewindow.cn/",
+            /**
+             * @param {Array of Regex} - Those hosts do not match the Regex patterns will be blocked, hence all accessible urls should match at least one pattern
+             */
+            white_list_patterns: [/.*/],
+            /**
+             * @param {Array of Regex} - Those hosts match the Regex patterns will be blocked, hence all accessible urls should not match any patterns below
+             */
+            black_list_patterns: [],
+        },
     ],
 };
