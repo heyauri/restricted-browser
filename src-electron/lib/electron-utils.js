@@ -170,6 +170,7 @@ function bindWindowEvents(currentWindow, windows, options = {}) {
         // mainWindow.webContents.on('devtools-opened', () => {
         //     mainWindow.webContents.closeDevTools()
         // })
+        // currentWindow.webContents.openDevTools();
     }
 
     currentWindow.on("closed", () => {

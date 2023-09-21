@@ -61,7 +61,7 @@ export default defineComponent({
     mounted() {
         let _this = this;
         //@ts-ignore
-        _this.$global.$on("xhrMsg", (data) => {
+        _this.$global.on("xhrMsg", (data) => {
             let content = data["response"] || data["responseText"];
             if (content.length > 600) {
                 content = content.slice(0, 600) + "...";
@@ -79,7 +79,7 @@ export default defineComponent({
     methods: {
         sendMsg(type, msg) {
             // @ts-ignore : $global在原型中不存在
-            this.$global.$emit(type, msg);
+            this.$global.emit(type, msg);
         },
         accessWebpage(item) {
             console.log(item);

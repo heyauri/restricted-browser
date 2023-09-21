@@ -26,7 +26,7 @@ export default defineComponent({
         console.log(this.$store)
         const store = mainStore();
         console.log(store)
-        let emit = _this.$global.$emit;
+        let emit = _this.$global.emit;
         let send2main = function (data) {
             console.log("data", data)
             window.rebrExposedApi.send("toMain", Object.assign({
@@ -60,7 +60,7 @@ export default defineComponent({
                     });
                     break;
                 case "xhrData":
-                    _this.$global.$emit("xhrMsg", res["data"]);
+                    emit("xhrMsg", res["data"]);
                     break;
                 // console.log(store);
                 // console.log(store.$state.logSrc, store.$state.dataSrc);
@@ -73,7 +73,7 @@ export default defineComponent({
         /**
          * 中转消息到主进程
          */
-        _this.$global.$on("closeWindows", data => {
+        _this.$global.on("closeWindows", data => {
             for (let t of data) {
                 send2main({
                     source: "main",
@@ -82,7 +82,7 @@ export default defineComponent({
                 });
             }
         });
-        _this.$global.$on("accessUrl", data => {
+        _this.$global.on("accessUrl", data => {
             console.log(data);
             // let da = Object.prototype.toString.call(data) === '[object Object]' ? JSON.parse(JSON.stringify(data)) : data;
             send2main({
